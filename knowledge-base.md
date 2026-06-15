@@ -85,9 +85,13 @@ Your 401(k) is meant for retirement, but there are a few ways to access money if
 - Investment expense ratios also apply, depending on the funds you choose (listed in the booklet).
 
 ## Need more help?
-- For any other questions, or help you can't get here, submit a request through the benefits help form: https://app.smartsheet.com/b/form/c02dbe410b5245078bbe7ce22e59eb13
-- To access or manage your American Funds account (balance, contributions, investments, statements, withdrawals): americanfunds.com/retire, the app "American Funds RKDirect 401k," or the 24/7 account line (877) 833-9322.
-- For help completing forms (withdrawals, rollovers): American Funds at (800) 421-4120.
+- Benefits help form (best for HHN questions, eligibility, and enrollment help): https://app.smartsheet.com/b/form/c02dbe410b5245078bbe7ce22e59eb13
+- Prefer to email? You can reach HR at HR@honorhealthnetwork.com.
+- Already enrolled and need your account? The American Funds channels below are for people who ALREADY have an account (to check a balance, change contributions or investments, see statements, or get help with a withdrawal or rollover form):
+  - Website: americanfunds.com/retire, or the app "American Funds RKDirect 401k"
+  - Forms help: (800) 421-4120
+  - 24/7 automated account line: (877) 833-9322
+- Important: if you are NOT enrolled yet, do not call the American Funds numbers. Those lines are only for people who already have an account. To enroll, use the online form: https://form.jotform.com/221354273322144. For any questions before you're enrolled, use the benefits help form above or email HR@honorhealthnetwork.com.
 
 ## Forms (downloads)
 - Enrollment booklet: /forms/401k-enrollment-booklet.pdf
