@@ -27,16 +27,17 @@ The forms referenced as /forms/...pdf live in public/forms/ and download from th
 - "Super" catch-up if you're age 60 to 63: an extra $11,250 in 2026 (instead of the $8,000).
 - Higher earners: starting in 2026, IRS rules require that if you earned more than $150,000 the prior year, your catch-up contributions be made as Roth (after-tax).
 - Once enrolled, you can change your contribution amount on the American Funds website or app.
+- Honor Health Network can't advise on how much you should contribute. For that kind of help, call the plan's investment consultants, The Waterford Group, at (585) 434-0649 or twg@waterfordgroupny.com.
 
 ## Traditional vs Roth (the two ways to contribute)
 The plan offers both. You can use one or split between them.
 - Traditional (pre-tax): money comes out before taxes, which lowers your taxable income now. You pay taxes later, when you withdraw in retirement.
 - Roth (after-tax): money comes out after taxes, so there's no tax break now, but qualified withdrawals in retirement are generally tax-free.
-- Which is better depends on your own tax situation. For personalized help, submit a request through the benefits help form (see "Need more help?") or speak with a licensed tax or financial professional.
+- Honor Health Network can't help you decide which to choose. For that, call the plan's investment consultants, The Waterford Group, at (585) 434-0649 or twg@waterfordgroupny.com.
 
 ## Employer match
 - The company matches dollar for dollar on the first 3% of pay you contribute, then 50 cents on the dollar on the next 2%.
-- So if you contribute at least 5% of your pay, the company adds 4% of your pay. (First 3% matched at 100% = 3%, next 2% matched at 50% = 1%, for 4% total.)
+- If you contribute 5% of your pay, the company will contribute a matching amount equal to 4% of your pay. (First 3% matched at 100% = 3%, next 2% matched at 50% = 1%, for 4% total.)
 - The company may also make an additional profit sharing contribution. This can vary year to year and isn't guaranteed.
 
 ## Vesting (what's yours to keep)
@@ -48,6 +49,7 @@ The plan offers both. You can use one or split between them.
   - After 3 years: 100%
 
 ## Accessing your account online
+- You must be enrolled in the plan before you can create an online account. If you're not enrolled yet, enroll first using the online form: https://form.jotform.com/221354273322144
 - Website: americanfunds.com/retire. Click Log In at the top right. First time? Click New User to register.
 - Mobile app: "American Funds RKDirect 401k" (App Store or Google Play). Note: a few actions, like requesting a withdrawal or adding beneficiaries, can only be done on the website, not the app.
 - Automated phone line, 24/7: (877) 833-9322.
@@ -58,7 +60,7 @@ The plan offers both. You can use one or split between them.
 - Two approaches:
   - Target date funds: one "do-it-for-me" fund based on the year you plan to retire. The mix adjusts automatically over time. You usually pick the fund closest to the year you'll turn about 65.
   - Individual funds: build your own mix from the plan's lineup (growth, growth-and-income, balanced, bond, and other categories).
-- This assistant does not recommend specific funds or give investment advice. For help choosing, submit a request through the benefits help form (see "Need more help?") or speak with a licensed financial professional. Review fund details, returns, and fees in the booklet: /forms/401k-enrollment-booklet.pdf
+- Honor Health Network can't give investment advice or recommend which funds or group to invest in. For that help, call the plan's investment consultants, The Waterford Group, at (585) 434-0649 or twg@waterfordgroupny.com. You can review fund details, returns, and fees in the booklet: /forms/401k-enrollment-booklet.pdf
 
 ## Rolling money in (from an old 401(k) or IRA)
 - If you have savings in a former employer's plan or an IRA, you may be able to roll it into this plan.
@@ -68,28 +70,28 @@ The plan offers both. You can use one or split between them.
 - Rollover questions: American Funds at (800) 421-4120.
 
 ## Taking money out
-Your 401(k) is meant for retirement, but there are a few ways to access money if you need to:
-- Plan loan: borrow from your account and pay yourself back with interest. Fees: $85 to set up, plus $50 per year while the loan is active.
-- Hardship withdrawal: for certain immediate and heavy financial needs. You must provide supporting documentation for review and approval before it can be processed. A $25 processing fee applies. Taxes apply, and if you're under age 59½ there may be an extra 10% early withdrawal penalty.
-  - Form: /forms/hardship-withdrawal-request.pdf
-- In-service withdrawal: you may be able to take a withdrawal while still employed. Taxes and a possible 10% early penalty may apply.
-- In general, withdrawals (other than loans and qualified Roth withdrawals) are taxable, and taking money before age 59½ usually adds a 10% penalty unless an exception applies.
+- The plan does NOT offer 401(k) loans. There is no option to borrow from your account.
+- The plan does NOT offer in-service withdrawals (taking money out for non-hardship reasons while you're still working).
+- The only way to take money out while still employed is a hardship withdrawal, for certain immediate and heavy financial needs.
+- Honor Health Network can't process or advise on a hardship withdrawal. The only thing we can do is give you the form. For help with it, call the plan's investment consultants, The Waterford Group, at (585) 434-0649 or twg@waterfordgroupny.com.
+- Hardship Withdrawal Request form: /forms/hardship-withdrawal-request.pdf
+- A $25 processing fee applies, taxes apply, and if you're under age 59½ there may be an extra 10% early withdrawal penalty.
 
 ## Leaving the company
 - When you leave, you can keep your savings in the plan (depending on your balance), or roll it over to an IRA or to a new employer's plan that accepts rollovers.
 
 ## Fees
 - Plan administrative fee: up to 0.50% of your account balance per year, plus a flat $20 per participant per year, taken from your account quarterly.
-- Loan fees: $85 setup, $50 per year.
 - One-time distribution fee: $85 per request. Expedited delivery is $25.
 - Investment expense ratios also apply, depending on the funds you choose (listed in the booklet).
 
 ## Need more help?
 - Benefits help form (best for HHN questions, eligibility, and enrollment help): https://app.smartsheet.com/b/form/c02dbe410b5245078bbe7ce22e59eb13
 - Prefer to email? You can reach HR at HR@honorhealthnetwork.com.
-- Already enrolled and need your account? The American Funds channels below are for people who ALREADY have an account (to check a balance, change contributions or investments, see statements, or get help with a withdrawal or rollover form):
+- For any advice (how much to contribute, Roth vs traditional, which funds or group to invest in) or for help with a hardship withdrawal: call the plan's investment consultants, The Waterford Group, at (585) 434-0649 or twg@waterfordgroupny.com. Honor Health Network can't give 401(k) advice.
+- Already enrolled and need your account? The American Funds channels below are for people who ALREADY have an account (to check a balance, change contributions or investments, see statements, or get help with a rollover form):
   - Website: americanfunds.com/retire, or the app "American Funds RKDirect 401k"
-  - Forms help: (800) 421-4120
+  - Account / rollover form help: (800) 421-4120
   - 24/7 automated account line: (877) 833-9322
 - Important: if you are NOT enrolled yet, do not call the American Funds numbers. Those lines are only for people who already have an account. To enroll, use the online form: https://form.jotform.com/221354273322144. For any questions before you're enrolled, use the benefits help form above or email HR@honorhealthnetwork.com.
 
