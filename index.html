@@ -17,6 +17,10 @@ const sendEl = document.getElementById("send");
 const history = []; // { role: "user" | "assistant", content }
 let loading = false;
 
+// A random id for this browser session, so HR's review log can group a person's
+// questions together. Not tied to identity; resets on page reload.
+const SESSION_ID = (crypto?.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2));
+
 // Build starter chips
 STARTERS.forEach((q) => {
   const b = document.createElement("button");
@@ -121,7 +125,7 @@ async function send(text) {
     const res = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: history }),
+      body: JSON.stringify({ messages: history, sessionId: SESSION_ID }),
     });
     const data = await res.json();
     hideTyping();
