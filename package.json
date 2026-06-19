@@ -1,15 +1,17 @@
-# Forces Railway to run the Node server instead of auto-detecting a static site.
-FROM node:20-slim
-WORKDIR /app
-
-# Install dependencies first (better build caching).
-COPY package*.json ./
-RUN npm install --omit=dev
-
-# Copy the rest of the app.
-COPY . .
-
-ENV NODE_ENV=production
-EXPOSE 3000
-
-CMD ["node", "server.js"]
+{
+  "name": "hhn-401k-assistant",
+  "version": "1.0.0",
+  "description": "401(k) benefits Q&A assistant for Honor Health Network employees",
+  "type": "module",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.22.0"
+  }
+}

@@ -1,244 +1,277 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex" />
-  <title>HHN Benefits — Dashboard</title>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Spectral:wght@500;600&display=swap" rel="stylesheet" />
-  <style>
-    :root {
-      --navy: #1F3A6E; --cyan: #1FAACE; --green: #6DB43F; --bg: #EEF3F8;
-      --line: #d7e0ec; --muted: #5b6b82; --flag: #c0392b; --card: #ffffff;
-    }
-    * { box-sizing: border-box; }
-    body { margin: 0; background: var(--bg); color: #1c2733; font-family: "IBM Plex Sans", system-ui, sans-serif; }
-    header { background: #fff; border-bottom: 1px solid var(--line); padding: 16px 22px; display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-    header h1 { font-family: "Spectral", serif; color: var(--navy); font-size: 20px; margin: 0; }
-    header .sub { color: var(--muted); font-size: 13px; }
-    .wrap { max-width: 1120px; margin: 0 auto; padding: 22px; }
-    .section-title { font-size: 13px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); margin: 26px 2px 12px; }
-    .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-    .stat { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
-    .stat .label { font-size: 12px; color: var(--muted); }
-    .stat .value { font-size: 26px; font-weight: 700; color: var(--navy); margin-top: 4px; line-height: 1.1; }
-    .stat .value.flag { color: var(--flag); }
-    .stat .sub { font-size: 11px; color: var(--muted); margin-top: 3px; }
-    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    @media (max-width: 760px) { .grid2 { grid-template-columns: 1fr; } }
-    .panel { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; }
-    .panel h3 { margin: 0 0 12px; font-size: 14px; color: var(--navy); }
-    .note { color: var(--muted); font-size: 12px; }
-    .note.warn { color: var(--flag); }
-    .bar-row { display: flex; align-items: center; gap: 10px; margin: 7px 0; font-size: 13px; }
-    .bar-label { width: 130px; flex-shrink: 0; color: #2b3a4d; }
-    .bar-track { flex: 1; background: #eef2f7; border-radius: 6px; height: 16px; overflow: hidden; }
-    .bar-fill { height: 100%; background: var(--cyan); border-radius: 6px; }
-    .bar-n { width: 34px; text-align: right; color: var(--muted); flex-shrink: 0; }
-    .controls { display: flex; gap: 8px; align-items: center; margin: 8px 0 14px; flex-wrap: wrap; }
-    .tab { border: 1px solid var(--line); background: #fff; color: var(--navy); padding: 7px 14px; border-radius: 999px; cursor: pointer; font-size: 13px; font-weight: 500; }
-    .tab.active { background: var(--navy); color: #fff; border-color: var(--navy); }
-    .count { color: var(--muted); font-size: 13px; margin-left: auto; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
-    .card.flagged { border-left: 4px solid var(--flag); }
-    .meta { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 7px; font-size: 12px; color: var(--muted); }
-    .pill { font-size: 11px; font-weight: 600; padding: 2px 9px; border-radius: 999px; }
-    .pill.hr { background: #fdecea; color: var(--flag); }
-    .pill.ok { background: #eaf5e0; color: #3e6b1a; }
-    .pill.topic { background: #e7f0f6; color: var(--navy); }
-    .pill.agency { background: #eef6ec; color: #3e6b1a; }
-    .q { font-weight: 600; font-size: 15px; margin: 2px 0 8px; }
-    .a { font-size: 14px; color: #34414f; white-space: pre-wrap; border-top: 1px dashed var(--line); padding-top: 8px; }
-    .row-actions { margin-top: 10px; }
-    .btn { border: 1px solid var(--line); background: #fff; color: var(--navy); padding: 6px 12px; border-radius: 8px; cursor: pointer; font-size: 13px; font-weight: 500; }
-    .btn:hover { background: var(--bg); }
-    .empty { color: var(--muted); font-size: 14px; padding: 26px 0; text-align: center; }
-    .chart { width: 100%; height: 150px; display: block; }
-    .chart .axis { font-size: 9px; fill: var(--muted); }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Benefits Assistant Dashboard</h1>
-    <span class="sub">Usage, cost, and what employees are asking</span>
-  </header>
-  <div class="wrap">
+# Honor Health Network — Benefits Knowledge Base
 
-    <div class="section-title">Usage</div>
-    <div class="cards" id="usageCards"><div class="empty">Loading…</div></div>
+<!--
+HOW THIS FILE WORKS
+This is the assistant's single source of truth. Edit it and push to GitHub; Railway redeploys.
+This tool now covers (1) the 401(k) retirement plan and (2) health and other benefits.
 
-    <div class="section-title">Estimated API cost</div>
-    <div class="panel" id="costPanel"><div class="empty">Loading…</div></div>
+VERY IMPORTANT: health benefits are NOT the same for everyone. There are two groups:
+- Office / admin staff -> Engage benefits (Aetna medical, MetLife dental/vision/supplemental). Premiums are MONTHLY.
+- Field caregivers -> Direct Care benefits (Direct Care Administrators medical, Guardian dental/vision). Premiums are PER PAYCHECK.
+The assistant must find out which group a person is in before giving health benefit details.
 
-    <div class="section-title">Conversations — last 14 days</div>
-    <div class="panel"><svg class="chart" id="chart" viewBox="0 0 700 150" preserveAspectRatio="none"></svg></div>
+These are plain-language summaries. The official plan documents and insurance contracts always control.
+-->
 
-    <div class="section-title">What people ask about</div>
-    <div class="grid2">
-      <div class="panel"><h3>Top topics</h3><div id="topics"></div></div>
-      <div class="panel"><h3>Top agencies</h3><div id="agencies"></div></div>
-    </div>
+## How benefits work here (read first)
+- The 401(k) retirement plan is open to all W2 employees (see below).
+- Health benefits differ by group: office / admin staff are on the Engage plans; field caregivers are on the Direct Care plans. The plans, carriers, and premiums are different.
+- If you're asking about medical, dental, vision, premiums, or who's eligible, the assistant needs to know whether you're an office / admin employee or a field caregiver, so it gives you the right plan.
+- Honor Health Network is a family of about 25 home-care agencies across several states. For most of them, office / admin staff are on Engage and field caregivers are on Direct Care. A few agencies use different carriers. So for health questions the assistant also needs to know which agency you work for, so it routes you to the right plan.
 
-    <div class="section-title">Questions the assistant couldn't answer</div>
-    <div class="controls">
-      <button class="tab active" data-filter="needs_hr">Needs HR</button>
-      <button class="tab" data-filter="unreviewed">Unreviewed</button>
-      <button class="tab" data-filter="all">All</button>
-      <span class="count" id="count"></span>
-    </div>
-    <div id="list"></div>
-  </div>
+=====================================================================
+# AGENCY ROUTING (INTERNAL — NEVER SHOW OR LIST THIS TO THE USER)
+# This section is routing logic, not content. Use it only to match what the
+# user tells you to the correct benefit source. Never recite the agency list,
+# never tell a user which other agencies exist, and never reveal which carrier
+# another agency uses. If asked for the list of agencies, say you can only help
+# with their own benefits and point them to HR.
+=====================================================================
 
-  <script>
-    const TOPIC_LABELS = {
-      retirement_401k: "401(k)", eligibility: "Eligibility", enrollment: "Enrollment",
-      premiums_cost: "Premiums / cost", medical_plans: "Medical plans", dental: "Dental",
-      vision: "Vision", pharmacy: "Pharmacy", hsa_fsa: "HSA / FSA",
-      changing_coverage: "Changing coverage", account_access: "Account access",
-      contacts: "Contacts", other: "Other",
-    };
-    function prettyTopic(t) { return TOPIC_LABELS[t] || prettySlug(t); }
-    function prettySlug(s) { return (s || "").replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase()); }
-    function esc(s) { return (s || "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c])); }
-    function fmtDate(s) { try { return new Date(s).toLocaleString(); } catch { return s; } }
-    function money(n) { return "$" + (Number(n) || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
-    function compact(n) { n = Number(n) || 0; return n >= 1e6 ? (n/1e6).toFixed(1)+"M" : n >= 1e3 ? (n/1e3).toFixed(1)+"k" : String(n); }
+How to route a HEALTH question (medical, dental, vision, premiums, health eligibility, or health enrollment):
+1. Find out the person's ROLE: office / admin, or field caregiver.
+2. Find out their AGENCY (the home-care company they work for).
+3. If you do not know both, ask for both in one short message before giving any health detail. Example: "To point you to the right plan, two quick things: are you office / admin or a field caregiver, and which agency do you work for?"
+4. Then match the agency below and answer ONLY from the correct source. Never mix carriers or plans. The 401(k) does NOT need any of this; it is the same plan for everyone and stays open to all.
 
-    let filter = "needs_hr";
+AGENCY BUCKETS (match loosely; tolerate spelling differences, missing words, and the state in parentheses):
 
-    async function loadStats() {
-      let s;
-      try {
-        const res = await fetch("/api/admin/stats");
-        if (!res.ok) throw new Error();
-        s = await res.json();
-      } catch { document.getElementById("usageCards").innerHTML = '<div class="empty">Could not load stats.</div>'; return; }
+A) DEFAULT AGENCIES — office / admin use ENGAGE; field caregivers use DIRECT CARE. This is the normal case. Treat any of these as default:
+- Agility Home Care (GA), Nightingale Services (GA)
+- All At Home (MA), Golden Years (MA)
+- All Health Home Care (NY), Hand in Hand (NY), Quality Healthcare (NY)
+- Always Home Services (NJ), Broadway Medical Adult Day Care (NJ), Broadway Respite & Home Care (NJ), Just Home Medical Adult Day Care (NJ)
+- Angels on Call / CEPA (PA), Angels on Call (Philly, PA), Central Penn Nursing Care (PA), FamilyCARES (PA), Ultimate Home Care (PA)
+- Angels on Call (MI)
+- Caring Home Care (MD)
+- First Horizon (IN)
+- VMT Home Health (DC)
 
-      if (s.dbReady === false) {
-        document.getElementById("usageCards").innerHTML = '<div class="empty">Database not connected yet.</div>';
-        return;
-      }
+B) OVERRIDE AGENCIES WITH LOADED PLANS — do NOT use the default. Use the agency's own block in the AGENCY-SPECIFIC OVERRIDES section below.
+- Family Care Visiting Nurse (CT), legally Family Care Visiting Nurse & Home Care Agency, LLC — field caregivers are on UnitedHealthcare (NexusACO OA), NOT Direct Care. Use the loaded block below for caregivers. For an office / admin employee at this agency, do not assume Engage or UHC; route to HR to confirm.
 
-      const c = s.conversations;
-      document.getElementById("usageCards").innerHTML = [
-        card("Conversations today", c.today),
-        card("This week", c.week),
-        card("This month", c.month),
-        card("All time", c.total),
-        card("Total questions", s.messagesTotal),
-        card("Needs HR (open)", s.needsHr.open, s.needsHr.total + " total", true),
-      ].join("");
+C) RECOGNIZED BUT NOT YET LOADED — these agencies are KNOWN to use different carriers, but their plan details are NOT loaded here. Do NOT fall back to the Engage or Direct Care defaults for their health benefits, because that would give the wrong plan. Instead, confirm you recognize the agency, explain that their specific medical / dental / vision details aren't in this tool yet, and send them to HR (benefits help form or HR@honorhealthnetwork.com). The 401(k) is still the same for them and can be answered normally.
+- IRN Home Care (CO) — uses Kaiser, not Direct Care. (Data pending; route caregiver health questions to HR for now.)
+- Juniper Adult Day Care (CT), Juniper Home Care Services (CT), Juniper Meals on Wheels (CT) — carrier unconfirmed. (Route health questions to HR for now.)
 
-      const k = s.cost;
-      document.getElementById("costPanel").innerHTML = `
-        <div class="cards">
-          ${card("Since tracking began", money(k.total))}
-          ${card("This month", money(k.month))}
-          ${card("Input tokens", compact(k.inputTokens))}
-          ${card("Output tokens", compact(k.outputTokens))}
-        </div>
-        <p class="note" style="margin-top:12px">Estimate based on logged tokens at ${money(k.rates.input)}/M input and ${money(k.rates.output)}/M output (Claude Sonnet 4.6). Counts start when this tracking went live; your Anthropic Console shows the exact bill.</p>`;
+D) UNRECOGNIZED — if the agency the person names is not on any list above, do not guess. Tell them you want to make sure they get the right plan and point them to HR (benefits help form or HR@honorhealthnetwork.com).
 
-      drawChart(s.daily || []);
-      renderBars("topics", (s.topics || []).map((r) => ({ label: prettyTopic(r.topic), n: r.n })));
-      renderBars("agencies", (s.agencies || []).map((r) => ({ label: prettySlug(r.agency), n: r.n })));
-    }
+## Eligibility
+- 401(k): all W2 employees who have been with the company at least 6 months. (This includes caregivers.)
+- Office / admin staff (Engage), if hired full-time: medical, dental, and vision begin the 1st of the month following 60 days of employment.
+- Field caregivers (Direct Care): caregivers are variable-hour employees. Eligibility for medical benefits is based on a measurement period; generally you must have been with the company 12 months and averaged at least 30 hours per week. Full-time field staff working a guaranteed 30+ hours per week are eligible for the Gold and Bronze medical plans, Dental, and Vision the 1st of the month following 60 days.
+- Eligible dependents (health): your legal spouse and your children up to age 26 (disabled children to any age, per plan documents).
 
-    function card(label, value, sub, flag) {
-      return `<div class="stat"><div class="label">${esc(label)}</div>
-        <div class="value${flag ? " flag" : ""}">${esc(String(value))}</div>
-        ${sub ? '<div class="sub">' + esc(sub) + '</div>' : ''}</div>`;
-    }
+## Changing benefits during the year (ACA / IRS rule)
+- Health elections stay in place for the whole plan year. You cannot enroll, change, or cancel whenever you want.
+- Outside of open enrollment, you can only make a change if you have a qualifying life event (for example marriage, divorce, birth, adoption, loss of other coverage), and you must apply with proof to HR within 30 days of the event.
+- Qualifying life event reference: https://www.healthcare.gov/glossary/qualifying-life-event/
+- Open enrollment changes take effect January 1.
 
-    function renderBars(elId, rows) {
-      const el = document.getElementById(elId);
-      if (!rows.length) { el.innerHTML = '<div class="note">No data yet.</div>'; return; }
-      const max = Math.max(...rows.map((r) => r.n), 1);
-      el.innerHTML = rows.map((r) => `
-        <div class="bar-row">
-          <div class="bar-label">${esc(r.label)}</div>
-          <div class="bar-track"><div class="bar-fill" style="width:${(r.n / max) * 100}%"></div></div>
-          <div class="bar-n">${r.n}</div>
-        </div>`).join("");
-    }
+## Plan year
+- The Engage plan year this year runs July 1, 2026 to December 31, 2026. Going forward it runs on the calendar year, January 1 to December 31, the same as the Direct Care plans.
+- Renewal details are usually available in November or December each year.
 
-    function drawChart(daily) {
-      // Fill in any missing days so the last 14 are continuous.
-      const days = [];
-      for (let i = 13; i >= 0; i--) {
-        const d = new Date(); d.setDate(d.getDate() - i);
-        const key = d.toISOString().slice(0, 10);
-        const hit = daily.find((x) => x.day === key);
-        days.push({ day: key, sessions: hit ? hit.sessions : 0 });
-      }
-      const W = 700, H = 150, pad = 22, n = days.length;
-      const max = Math.max(...days.map((d) => d.sessions), 1);
-      const bw = (W - pad * 2) / n;
-      let svg = "";
-      days.forEach((d, i) => {
-        const h = (d.sessions / max) * (H - pad * 2);
-        const x = pad + i * bw;
-        const y = H - pad - h;
-        svg += `<rect x="${x + 3}" y="${y}" width="${bw - 6}" height="${h}" rx="3" fill="var(--cyan)"></rect>`;
-        if (i % 2 === 0) svg += `<text class="axis" x="${x + bw / 2}" y="${H - 6}" text-anchor="middle">${d.day.slice(5)}</text>`;
-        if (d.sessions > 0) svg += `<text class="axis" x="${x + bw / 2}" y="${y - 3}" text-anchor="middle">${d.sessions}</text>`;
-      });
-      document.getElementById("chart").innerHTML = svg;
-    }
+=====================================================================
+# 401(k) RETIREMENT PLAN (all W2 employees, after 6 months)
+=====================================================================
 
-    async function loadList() {
-      const listEl = document.getElementById("list");
-      const countEl = document.getElementById("count");
-      listEl.innerHTML = '<div class="empty">Loading…</div>';
-      let data;
-      try {
-        const res = await fetch("/api/admin/questions?filter=" + encodeURIComponent(filter));
-        if (!res.ok) throw new Error();
-        data = await res.json();
-      } catch { listEl.innerHTML = '<div class="empty">Could not load questions.</div>'; return; }
+## 401(k) basics
+- Plan: New York Home Health Holdings 401(k) Profit Sharing Plan. Recordkeeper: American Funds (Capital Group). Plan ID: IRK149167.
+- Open to all W2 employees after 6 months with the company.
 
-      if (data.dbReady === false) { listEl.innerHTML = '<div class="empty">Database not connected yet.</div>'; return; }
-      const rows = data.rows || [];
-      countEl.textContent = rows.length + (rows.length === 1 ? " entry" : " entries");
-      listEl.innerHTML = rows.length ? rows.map(renderCard).join("") : '<div class="empty">Nothing here right now.</div>';
-    }
+## 401(k) contributions
+- You decide how much of each paycheck to contribute, as a percentage or a dollar amount.
+- 2026 IRS limit: up to $24,500 of your own pay. Age 50+ catch-up: an extra $8,000. Age 60 to 63 catch-up: an extra $11,250.
+- Honor Health Network can't advise on how much to contribute. For that, call The Waterford Group at (585) 434-0649 or twg@waterfordgroupny.com.
 
-    function renderCard(r) {
-      const hrPill = r.needs_hr ? '<span class="pill hr">Needs HR</span>' : "";
-      const okPill = r.reviewed ? '<span class="pill ok">Reviewed</span>' : "";
-      const topicPill = r.topic ? '<span class="pill topic">' + esc(prettyTopic(r.topic)) + '</span>' : "";
-      const agencyPill = r.agency && r.agency !== "none" ? '<span class="pill agency">' + esc(prettySlug(r.agency)) + '</span>' : "";
-      const btn = r.reviewed ? "Mark unreviewed" : "Mark reviewed";
-      return `
-        <div class="card${r.needs_hr ? " flagged" : ""}">
-          <div class="meta">${hrPill}${okPill}${topicPill}${agencyPill}<span>${fmtDate(r.created_at)}</span></div>
-          <div class="q">${esc(r.question)}</div>
-          <div class="a">${esc(r.answer)}</div>
-          <div class="row-actions"><button class="btn" onclick="toggleReview(${r.id}, ${!r.reviewed})">${btn}</button></div>
-        </div>`;
-    }
+## Traditional vs Roth (401k)
+- Traditional (pre-tax): lowers taxable income now; you pay taxes when you withdraw in retirement.
+- Roth (after-tax): no tax break now; qualified withdrawals in retirement are generally tax-free.
+- Honor Health Network can't tell you which to choose. Call The Waterford Group at (585) 434-0649 or twg@waterfordgroupny.com.
 
-    async function toggleReview(id, reviewed) {
-      try {
-        await fetch("/api/admin/questions/" + id + "/review", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ reviewed }),
-        });
-        loadList(); loadStats();
-      } catch { alert("Could not update that entry."); }
-    }
+## 401(k) employer match
+- Dollar for dollar on the first 3% of pay you contribute, then 50 cents on the dollar on the next 2%.
+- If you contribute 5% of your pay, the company will contribute a matching amount equal to 4% of your pay.
+- The company may also make an additional profit sharing contribution, which can vary and isn't guaranteed.
 
-    document.querySelectorAll(".tab").forEach((t) => {
-      t.addEventListener("click", () => {
-        document.querySelectorAll(".tab").forEach((x) => x.classList.remove("active"));
-        t.classList.add("active");
-        filter = t.dataset.filter;
-        loadList();
-      });
-    });
+## 401(k) vesting
+- Your own contributions and the Safe Harbor match are always 100% yours.
+- Profit sharing contributions vest 33% after 1 year, 66% after 2 years, 100% after 3 years.
 
-    loadStats();
-    loadList();
-  </script>
-</body>
-</html>
+## 401(k) account access
+- You must be enrolled before you can create an online account.
+- Website: americanfunds.com/retire (Log In, then New User to register). App: "American Funds RKDirect 401k." 24/7 line: (877) 833-9322.
+- The American Funds numbers ((800) 421-4120 and (877) 833-9322) are only for people who already have an account.
+
+## Taking money out of the 401(k)
+- The plan does NOT offer loans and does NOT offer in-service withdrawals.
+- The only way to take money out while employed is a hardship withdrawal. HHN can only give you the form; for help, call The Waterford Group at (585) 434-0649 or twg@waterfordgroupny.com.
+- Hardship form: /forms/hardship-withdrawal-request.pdf. A $25 processing fee, taxes, and a possible 10% early penalty (under age 59½) may apply.
+
+## Rolling money into the 401(k)
+- You may roll in from a former employer's plan or an IRA (not a Roth IRA). Form: /forms/incoming-rollover-request.pdf. Questions: American Funds (800) 421-4120.
+
+## Enroll in the 401(k)
+- Online enrollment form: https://form.jotform.com/221354273322144
+
+=====================================================================
+# OFFICE / ADMIN BENEFITS — ENGAGE (Aetna medical, MetLife dental/vision)
+# Premiums are MONTHLY, and reflect the employee cost after the employer contribution.
+=====================================================================
+
+## Engage medical (Aetna) — individual deductible, employee-only monthly premium
+- Aetna EPO 0-100 45/65: $0 deductible, $636.66/mo
+- Aetna MCPOS 0-100: $0 deductible, $1,031.03/mo
+- Aetna MCPOS 750-90: $750 deductible, $771.19/mo
+- Aetna EPO 1000-80: $1,000 deductible, $519.81/mo
+- Aetna MC 2000-80: $2,000 deductible, $486.75/mo
+- Aetna EPO 3000-80: $3,000 deductible, $383.74/mo
+- Aetna MCPOS HSA 3500-90: $3,500 deductible, $369.14/mo (HSA-compatible; no employer HSA contribution)
+- Aetna EPO 6350-100: $6,350 deductible, $268.43/mo
+- Lower deductible costs more per month; higher deductible costs less. Family premiums and full copays are in the benefits summary: /forms/2026-engage-benefits-summary.pdf
+
+## Engage dental (Aetna) — employee-only monthly premium
+- Aetna DMO: $22.03 / Aetna Low DPPO: $35.30 / Aetna Mid DPPO: $50.10 / Aetna High DPPO: $67.58
+- DPPO plans: $50 individual deductible, annual maximums $1,000 to $3,000 by plan. The DMO uses set copays.
+
+## Engage vision (Aetna / EyeMed) — employee-only monthly premium
+- EyeMed Vision: $8.65 / Vision Preferred High: $12.13. Covers yearly exam, lenses, frames, and contacts.
+
+## Engage life, disability, and supplemental (MetLife)
+- Basic Life and AD&D: $10,000, employer-paid at no cost to full-time eligible employees.
+- Optional, employee-paid (rates are age-based; see the Engage app for your exact cost): voluntary life and AD&D, short-term disability, long-term disability, accident insurance, critical illness, group hospital indemnity, pet coverage, LegalShield/IDShield, Freshbenies, Working Advantage discounts, and CompareMedsRx.
+
+## Engage spending and savings accounts (2026)
+- Health FSA up to $3,400. Dependent Care FSA up to $7,500. HSA (for HSA-compatible plans): individual $4,400, family $8,750. Commuter: parking $340/month, transit $340/month.
+
+## Engage EAP / Health Advocate
+- Free for employees on an Engage health, dental, or vision plan. Confidential counseling (1 to 3 visits) and help with claims and insurance issues.
+- Phone: (877) 233-8205. Monday to Friday 8am to 10pm ET, plus 24/7 online.
+
+## Engage enrollment and changes
+- Enroll in or change your Engage benefits in your Engage profile: https://my.engagepeo.com/
+- Specific Engage benefit questions: (877) 233-8205.
+- Full Engage benefits summary (all plans, family premiums, copays): /forms/2026-engage-benefits-summary.pdf
+
+=====================================================================
+# FIELD CAREGIVER BENEFITS — DIRECT CARE (Direct Care Administrators medical, Guardian dental/vision)
+# Premiums are PER PAYCHECK (weekly or bi-weekly), pre-tax, and reflect the employee cost.
+=====================================================================
+
+## Direct Care medical plans (network: CIGNA, through Multiplan; pharmacy: CerpassRx)
+There are three medical options: MEC, Bronze (EPO), and Gold (PPO).
+
+- MEC plan: an ACA preventive-care plan. Covers preventive services (checkups, screenings, immunizations, well-woman and well-child care) at 100% in-network. It does not cover most other medical services. Cost is a percentage of gross income; see "Direct Care premiums" and confirm the exact figure with HR.
+- Bronze (EPO, in-network only): higher deductible, lower premium. Best if you don't use much care. No out-of-network coverage.
+  - Individual / family deductible: $5,000 / $10,000. Coinsurance: 20%. Out-of-pocket max: $6,850 / $13,700.
+  - Primary care $35 copay, specialist $70, urgent care $50, emergency room $500 copay.
+- Gold (PPO, in and out of network): lower deductible, higher premium. Best if you use more care. Out-of-network costs much more.
+  - In-network individual / family deductible: $1,000 / $2,000. Coinsurance: 10% in-network (40% out-of-network). Out-of-pocket max: $3,000 / $6,000 in-network.
+  - Primary care $20 copay, specialist $40, urgent care $50, emergency room $250 copay.
+- Full plan details (every service) are at directcareadministrators.com.
+
+## Direct Care dental (Guardian, PPO)
+- Annual maximum: $1,000 per person. Orthodontia lifetime maximum: $1,000 (orthodontia covered to age 19).
+- Deductible (basic and major services only): $50 individual / $150 family.
+- You pay: preventive 0%, basic services 20%, major services 50%, orthodontia 50%. In and out-of-network (out-of-network paid on reasonable and customary; you pay the balance).
+
+## Direct Care vision (Guardian, Davis network)
+- Eye exam (every 12 months): $10 copay. Lenses (every 12 months): $10 copay.
+- Frame (every 24 months): up to $100 allowance, then 20% off the balance.
+- Contacts instead of glasses (every 12 months): up to $120 allowance, then 15% off the balance.
+
+## Direct Care pharmacy (CerpassRx)
+- Pharmacy benefit manager, available 24/7: (469) 888-6806, www.cerpassrx.com. Network includes national chains and most local pharmacies; generics save the most.
+- Mail delivery available through PillPack by Amazon Pharmacy: sign up at www.cerpassrx.com/pillpack or (855) 966-0966.
+- A Prescription Optimization Program helps with high-cost medications: (469) 888-6812.
+
+## Accessing your Direct Care medical account
+- Website: www.directcareadministrators.com (Member/Provider Login), or call (800) 565-3234, 7:30am to 5:00pm MST. App: "Direct Care Administrators."
+- Login: your username is your Social Security number (no spaces or dashes) and your PIN is your full birth date as MMDDYYYY. (The assistant will never ask you for these; this is just how the website login works.)
+- Find an in-network provider: on the site, use Provider Networks to search the CIGNA / Multiplan network. If your provider isn't listed, call (800) 565-3234 and they can reach out to the provider for you.
+
+## Direct Care premiums (PER PAYCHECK, pre-tax, employee cost)
+Weekly:
+- Gold: Employee $218.09, Employee + Spouse $495.85, Employee + Child(ren) $431.87, Family $776.21
+- Bronze: Employee $13.09, Employee + Spouse $32.24, Employee + Child(ren) $26.08, Family $39.99
+- MEC: 9.96% of gross income (plus an add-on for dependents)
+- Dental: Employee $8.61, all other tiers $25.14
+- Vision: Employee $1.15, all other tiers $3.22
+Bi-weekly:
+- Gold: Employee $436.18, Employee + Spouse $991.71, Employee + Child(ren) $863.74, Family $1,552.42
+- MEC: Employee $26.18, Employee + Spouse $64.48, Employee + Child(ren) $52.16, Family $79.98
+- Dental: Employee $17.23, all other tiers $50.28
+- Vision: Employee $2.30, all other tiers $6.43
+Note: there is a known labeling difference in the guide for the "9.96% of gross income" figure (it's shown on the MEC plan in the weekly schedule and on the Bronze plan in the bi-weekly schedule). If someone asks for an exact percentage-based amount, tell them to confirm with HR which plan it applies to.
+
+## Direct Care carrier contacts
+- Medical / claims / ID card / providers: Direct Care Administrators, (800) 565-3234, www.directcareadministrators.com
+- Pharmacy: CerpassRx, (469) 888-6806, www.cerpassrx.com
+- Dental and vision: Guardian, (888) 482-7342, www.guardiananytime.com
+
+## Direct Care enrollment and changes
+- Enroll: complete the enrollment form at https://hhn.jotform.com/253283952673062 (within 30 days of becoming eligible, at open enrollment, or with a qualifying life event).
+- Any changes to a caregiver's Direct Care benefits go through HR using this form: https://app.smartsheet.com/b/form/8f21030399634aff80ab873214296298
+
+=====================================================================
+# AGENCY-SPECIFIC OVERRIDES
+# Each block below replaces the default plan for ONE agency. Only use a block
+# when the person has confirmed they work for that agency (see AGENCY ROUTING).
+# A block states which ROLE it applies to and what stays on the default.
+# Blocks marked "NOT YET LOADED" are templates only — do not answer from them;
+# route those agencies to HR per the routing rules.
+=====================================================================
+
+## Family Care Visiting Nurse (CT) — LOADED
+Who this covers: employees of Family Care Visiting Nurse & Home Care Agency, LLC, in Connecticut. Field caregivers here are on UnitedHealthcare, not Direct Care. If an office / admin employee at this agency asks, do not assume Engage or UHC; route them to HR to confirm (benefits help form or HR@honorhealthnetwork.com).
+
+Carrier and network: UnitedHealthcare (UHC), NexusACO OA plan, Connecticut. You choose a primary care physician (PCP), and per the plan summaries you can see a specialist without a referral. These are in-network plans: a "Designated Network" tier costs you the least, the broader "Network" tier costs a bit more, and out-of-network care is generally not covered except emergencies.
+
+Plan year: November 1 to October 31 (the current period is November 1, 2025 to October 31, 2026). This is different from the Engage and Direct Care plans, which run on the calendar year.
+
+Eligibility: full-time employees only. Coverage begins the 1st of the month following 60 days of employment. Part-time employees are not eligible.
+
+Medical plans (three options; preventive care is 100% covered with no cost before the deductible on all three):
+- Copay plan (plan code EFNH): deductible $2,500 individual / $5,000 family; out-of-pocket max $7,500 / $15,000. Primary care $30 per visit in the Designated Network ($45 in the broader Network); specialist $60 / $75. Urgent care and emergency room have no extra coinsurance after the deductible. Outpatient mental health $25 per visit. Not HSA-eligible.
+- HSA plan (plan code EN3M): deductible $3,300 / $6,600; out-of-pocket max $6,700 / $13,400. After the deductible you pay 20% of costs in the Designated Network (50% in the broader Network) for most care. HSA-eligible.
+- HSA plan (plan code EFNQ MOD): deductible $6,500 / $13,000; out-of-pocket max $6,500 / $13,000. After the deductible the Designated Network is covered at 100% (0% coinsurance; 30% in the broader Network). HSA-eligible.
+
+Prescriptions (all three plans): Tier 1 $5, Tier 2 $25, Tier 3 $40 for up to a 31-day retail supply; mail order (up to a 90-day supply) is $12.50 / $62.50 / $100. On the copay plan (EFNH) the drug copays do not run through the deductible; on the two HSA plans, drug costs are subject to the deductible first. There is no Tier 4.
+
+HSA contributions: you can only put money into a Health Savings Account if you are enrolled in one of the two HSA-eligible plans (EN3M or EFNQ MOD). The copay plan (EFNH) is not HSA-eligible.
+
+Dental (UnitedHealthcare PPO), two options:
+- $1,000 per-person annual maximum: $50 individual / $150 family deductible. Preventive and diagnostic covered at 100%; basic services 90% in-network (75% out-of-network); major services 60% in-network (50% out-of-network).
+- $750 per-person annual maximum: $50 / $150 deductible. Diagnostic, preventive, and basic services 80%; major services 50%.
+
+Vision (UnitedHealthcare): comprehensive eye exam every 12 months, eyeglass lenses every 12 months, frames every 24 months, and contacts (instead of glasses) every 12 months. For exact copays and frame/contact allowances, check with UHC or HR.
+
+Premiums: premiums are taken as a weekly deduction from your paycheck. The exact dollar amounts by plan and coverage tier are not loaded in this assistant yet; for current premium amounts, contact HR (benefits help form or HR@honorhealthnetwork.com).
+
+Member account and ID cards: download and register on the UnitedHealthcare app, or use myuhc.com, to see your ID card, benefits, and claims. Member services: (888) 331-3408. Non-members can look up plan information at welcometouhc.com.
+
+Enroll or waive coverage:
+- Enroll in or waive medical, dental, and/or vision: https://hhn.jotform.com/260824439657972
+- Waive all coverage: https://hhn.jotform.com/260843368264968
+
+Changing coverage during the year: you can only drop or change coverage during open enrollment, unless you have a qualifying life event (such as loss of other coverage, marriage, or birth of a child) or a change in employment status (such as moving to part-time). Report a qualifying life event to HR within 30 days.
+# HELP, ADVICE, AND CONTACTS
+=====================================================================
+
+## Choosing a plan / medical questions
+- Honor Health Network can't give medical opinions or tell you which plan to choose. The assistant can explain the plans so you can compare them.
+- These plans aren't your only option. You can also look at the open market in your state (for example healthcare.gov) to see other coverage you may be able to buy.
+
+## Need more help?
+- General HHN benefits questions, eligibility, or enrollment help: benefits help form https://app.smartsheet.com/b/form/c02dbe410b5245078bbe7ce22e59eb13 or email HR@honorhealthnetwork.com.
+- Office / admin (Engage) specific benefit questions: (877) 233-8205.
+- Field caregiver (Direct Care) questions: use the carrier contacts above (Direct Care (800) 565-3234, CerpassRx (469) 888-6806, Guardian (888) 482-7342). For changes or HHN-side help, use the Direct Care changes form https://app.smartsheet.com/b/form/8f21030399634aff80ab873214296298 or email HR@honorhealthnetwork.com.
+- 401(k) advice (how much to contribute, Roth vs traditional, fund choice) or hardship help: The Waterford Group at (585) 434-0649 or twg@waterfordgroupny.com.
+
+## Forms (downloads)
+- Engage benefits summary (office / admin): /forms/2026-engage-benefits-summary.pdf
+- 401(k) enrollment booklet: /forms/401k-enrollment-booklet.pdf
+- 401(k) hardship withdrawal: /forms/hardship-withdrawal-request.pdf
+- 401(k) incoming rollover: /forms/incoming-rollover-request.pdf
+- 401(k) accessing your account: /forms/accessing-your-account.pdf

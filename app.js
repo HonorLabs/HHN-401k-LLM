@@ -1,178 +1,162 @@
-:root {
-  --bg: #EEF3F8;          /* light cool blue-gray */
-  --navy: #1F3A6E;        /* HHN deep blue */
-  --navy-deep: #162C55;
-  --cyan: #1FAACE;        /* HHN teal/cyan */
-  --cyan-deep: #1892B3;
-  --green: #6DB43F;       /* HHN leaf green */
-  --ink: #1B2436;
-  --muted: #5C6677;
-  --line: #D7E0EC;
-  --card: #FFFFFF;
+const STARTERS = [
+  "When am I eligible for health benefits?",
+  "What medical plans can I choose from?",
+  "How much does the 401(k) match?",
+  "How do I enroll, and what's the deadline?",
+  "Can I change my health plan mid-year?",
+  "What's the difference between traditional and Roth?",
+];
+
+const scrollEl = document.getElementById("scroll");
+const msgsEl = document.getElementById("msgs");
+const emptyEl = document.getElementById("empty");
+const startersEl = document.getElementById("starters");
+const inputEl = document.getElementById("input");
+const sendEl = document.getElementById("send");
+
+const history = []; // { role: "user" | "assistant", content }
+let loading = false;
+
+// A random id for this browser session, so HR's review log can group a person's
+// questions together. Not tied to identity; resets on page reload.
+const SESSION_ID = (crypto?.randomUUID?.() || String(Date.now()) + Math.random().toString(16).slice(2));
+
+// Build starter chips
+STARTERS.forEach((q) => {
+  const b = document.createElement("button");
+  b.className = "chip";
+  b.textContent = q;
+  b.addEventListener("click", () => send(q));
+  startersEl.appendChild(b);
+});
+
+const BOT_AVATAR = `
+  <div class="avatar" aria-hidden="true">
+    <svg width="16" height="16" viewBox="0 0 40 40">
+      <path d="M9 27 C 15 27, 18 14, 31 11" fill="none" stroke="#9DCB3B" stroke-width="3" stroke-linecap="round" />
+      <circle cx="31" cy="11" r="3.4" fill="#FFFFFF" />
+    </svg>
+  </div>`;
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 }
 
-* { box-sizing: border-box; }
-html, body { height: 100%; margin: 0; }
-
-body {
-  background: var(--bg);
-  color: var(--ink);
-  font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
-  font-size: 15px;
-  line-height: 1.55;
-  -webkit-font-smoothing: antialiased;
+// Turn URLs, form paths, emails, and phone numbers into clickable links.
+// Everything is escaped first, so this is safe to set as innerHTML.
+function renderRich(text) {
+  const pattern = /(https?:\/\/[^\s<]+)|(\/forms\/[A-Za-z0-9_\-]+\.pdf)|([A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,})|(\(\d{3}\)\s?\d{3}-\d{4}|\b\d{3}-\d{3}-\d{4}\b)/g;
+  let out = "";
+  let last = 0;
+  let m;
+  while ((m = pattern.exec(text))) {
+    out += escapeHtml(text.slice(last, m.index));
+    const token = m[0];
+    if (m[1]) {
+      out += `<a href="${escapeHtml(token)}" target="_blank" rel="noopener noreferrer">${escapeHtml(token)}</a>`;
+    } else if (m[2]) {
+      out += `<a href="${escapeHtml(token)}" target="_blank" rel="noopener noreferrer">${escapeHtml(token)}</a>`;
+    } else if (m[3]) {
+      out += `<a href="mailto:${escapeHtml(token)}">${escapeHtml(token)}</a>`;
+    } else if (m[4]) {
+      const tel = token.replace(/[^\d]/g, "");
+      out += `<a href="tel:${tel}">${escapeHtml(token)}</a>`;
+    }
+    last = m.index + token.length;
+  }
+  out += escapeHtml(text.slice(last));
+  return out;
 }
 
-.app { height: 100%; display: flex; flex-direction: column; }
-
-/* Header */
-.header {
-  background: var(--card);
-  border-bottom: 1px solid var(--line);
-  padding: 12px 20px;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex-shrink: 0;
-}
-.brand { display: inline-flex; align-items: center; }
-.logo { height: 44px; width: auto; display: block; }
-.divider { width: 1px; height: 30px; background: var(--line); flex-shrink: 0; }
-.sub {
-  font-family: "Spectral", Georgia, serif;
-  font-size: 16px;
-  font-weight: 500;
-  color: var(--navy);
-  letter-spacing: 0.2px;
+function scrollToBottom() {
+  scrollEl.scrollTop = scrollEl.scrollHeight;
 }
 
-/* Scroll area */
-.scroll { flex: 1 1 auto; overflow-y: auto; padding: 26px 20px 8px; }
-.inner { max-width: 720px; margin: 0 auto; }
+function addBubble(role, text) {
+  if (emptyEl) emptyEl.classList.add("hidden");
+  const row = document.createElement("div");
+  row.className = "row" + (role === "user" ? " user" : "");
+  const bubbleClass = role === "user" ? "user" : role === "error" ? "err" : "bot";
+  const bubble = document.createElement("div");
+  bubble.className = "bubble " + bubbleClass;
+  if (role === "assistant") {
+    bubble.innerHTML = renderRich(text); // clickable links in answers
+  } else {
+    bubble.textContent = text; // user + error stay plain
+  }
+  if (role !== "user") row.innerHTML = BOT_AVATAR;
+  row.appendChild(bubble);
+  msgsEl.appendChild(row);
+  scrollToBottom();
+  return row;
+}
 
-/* Empty state */
-.empty { padding: 18px 0 8px; }
-.empty.hidden { display: none; }
-.empty-h {
-  font-family: "Spectral", Georgia, serif;
-  font-weight: 600;
-  font-size: 30px;
-  line-height: 1.18;
-  color: var(--navy);
-  margin: 0 0 10px;
-  max-width: 16ch;
+function showTyping() {
+  const row = document.createElement("div");
+  row.className = "row";
+  row.id = "typing-row";
+  row.innerHTML = BOT_AVATAR + `<div class="bubble bot"><div class="dots"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div></div>`;
+  msgsEl.appendChild(row);
+  scrollToBottom();
 }
-.empty-p { color: var(--muted); font-size: 15px; margin: 0 0 24px; max-width: 48ch; }
-.starters-label {
-  font-size: 11.5px;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: var(--muted);
-  margin-bottom: 10px;
-}
-.starters { display: flex; flex-direction: column; gap: 8px; }
-.chip {
-  text-align: left;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-left: 3px solid var(--line);
-  border-radius: 9px;
-  padding: 12px 14px;
-  font: inherit;
-  font-size: 14.5px;
-  color: var(--ink);
-  cursor: pointer;
-  transition: border-color .15s, transform .08s, box-shadow .15s;
-}
-.chip:hover { border-left-color: var(--cyan); box-shadow: 0 2px 10px rgba(31,58,110,0.08); }
-.chip:active { transform: translateY(1px); }
 
-/* Messages */
-.msgs { display: flex; flex-direction: column; gap: 18px; padding-bottom: 8px; }
-.row { display: flex; gap: 11px; }
-.row.user { justify-content: flex-end; }
-.avatar {
-  width: 30px; height: 30px; border-radius: 50%;
-  flex-shrink: 0; margin-top: 2px;
-  display: flex; align-items: center; justify-content: center;
-  background: var(--cyan);
+function hideTyping() {
+  const t = document.getElementById("typing-row");
+  if (t) t.remove();
 }
-.bubble {
-  max-width: 80%;
-  padding: 12px 15px;
-  border-radius: 14px;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-.bubble.bot { background: var(--card); border: 1px solid var(--line); border-top-left-radius: 5px; color: var(--ink); }
-.bubble.user { background: var(--navy); color: #EEF3F8; border-top-right-radius: 5px; }
-.bubble.err { background: #FBEDED; border: 1px solid #E6C3C3; color: #8A3030; }
-.bubble.bot a { color: var(--cyan-deep); text-decoration: underline; text-underline-offset: 2px; }
-.bubble.bot a:hover { color: var(--navy); }
 
-/* Typing */
-.dots { display: flex; gap: 5px; padding: 4px 2px; }
-.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--muted); opacity: .4; animation: pulse 1.2s infinite ease-in-out; }
-.dot:nth-child(2) { animation-delay: .2s; }
-.dot:nth-child(3) { animation-delay: .4s; }
-@keyframes pulse { 0%,60%,100% { opacity:.25; transform: translateY(0);} 30% { opacity:.85; transform: translateY(-3px);} }
+function setLoading(v) {
+  loading = v;
+  sendEl.disabled = v || !inputEl.value.trim();
+}
 
-/* Composer */
-.foot { flex-shrink: 0; border-top: 1px solid var(--line); background: var(--bg); padding: 14px 20px 16px; }
-.foot-inner { max-width: 720px; margin: 0 auto; }
-.composer {
-  display: flex;
-  align-items: flex-end;
-  gap: 9px;
-  background: var(--card);
-  border: 1px solid var(--line);
-  border-radius: 13px;
-  padding: 8px 8px 8px 14px;
-}
-.composer:focus-within { border-color: var(--navy); }
-.input {
-  flex: 1;
-  border: none;
-  outline: none;
-  resize: none;
-  background: transparent;
-  font: inherit;
-  font-size: 15px;
-  color: var(--ink);
-  max-height: 130px;
-  line-height: 1.5;
-  padding: 5px 0;
-}
-.input::placeholder { color: #9AA6B5; }
-.send {
-  flex-shrink: 0;
-  width: 38px; height: 38px;
-  border: none; border-radius: 10px;
-  background: var(--navy);
-  color: #fff;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-  transition: background .15s;
-}
-.send:hover:not(:disabled) { background: var(--navy-deep); }
-.send:disabled { background: #AEBAC9; cursor: not-allowed; }
+async function send(text) {
+  const trimmed = (text != null ? text : inputEl.value).trim();
+  if (!trimmed || loading) return;
 
-.disclaimer {
-  margin: 10px auto 0;
-  font-size: 11.5px;
-  line-height: 1.5;
-  color: var(--muted);
-  text-align: center;
-  max-width: 60ch;
-}
-.disclaimer b { color: #46514A; font-weight: 600; }
+  addBubble("user", trimmed);
+  history.push({ role: "user", content: trimmed });
+  inputEl.value = "";
+  inputEl.style.height = "auto";
+  setLoading(true);
+  showTyping();
 
-@media (max-width: 520px) {
-  .empty-h { font-size: 25px; }
-  .bubble { max-width: 86%; }
-  .logo { height: 38px; }
-  .sub { font-size: 14px; }
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ messages: history, sessionId: SESSION_ID }),
+    });
+    const data = await res.json();
+    hideTyping();
+
+    if (!res.ok) {
+      addBubble("error", data.error || "Something went wrong. Please try again.");
+    } else {
+      addBubble("assistant", data.reply);
+      history.push({ role: "assistant", content: data.reply });
+    }
+  } catch (err) {
+    hideTyping();
+    addBubble("error", "Couldn't reach the assistant. Please check your connection and try again.");
+  } finally {
+    setLoading(false);
+  }
 }
-@media (prefers-reduced-motion: reduce) {
-  .dot { animation: none; }
-}
+
+// Composer behavior
+inputEl.addEventListener("input", () => {
+  inputEl.style.height = "auto";
+  inputEl.style.height = Math.min(inputEl.scrollHeight, 130) + "px";
+  sendEl.disabled = loading || !inputEl.value.trim();
+});
+
+inputEl.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+});
+
+sendEl.addEventListener("click", () => send());
+sendEl.disabled = true;
